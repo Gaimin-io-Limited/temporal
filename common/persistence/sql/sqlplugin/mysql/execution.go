@@ -20,14 +20,14 @@ const (
 	getExecutionQuery = `SELECT ` + executionsColumns + ` FROM executions
  WHERE shard_id = ? AND namespace_id = ? AND workflow_id = ? AND run_id = ?`
 
-	deleteExecutionQuery = `DELETE FROM executions 
+	deleteExecutionQuery = `DELETE FROM executions
  WHERE shard_id = ? AND namespace_id = ? AND workflow_id = ? AND run_id = ?`
 
-	lockExecutionQueryBase = `SELECT db_record_version, next_event_id FROM executions 
+	lockExecutionQueryBase = `SELECT db_record_version, next_event_id FROM executions
  WHERE shard_id = ? AND namespace_id = ? AND workflow_id = ? AND run_id = ?`
 
 	writeLockExecutionQuery = lockExecutionQueryBase + ` FOR UPDATE`
-	readLockExecutionQuery  = lockExecutionQueryBase + ` LOCK IN SHARE MODE`
+	readLockExecutionQuery  = lockExecutionQueryBase + ` FOR UPDATE`
 
 	createCurrentExecutionQuery = `INSERT INTO current_executions
 (shard_id, namespace_id, workflow_id, run_id, create_request_id, state, status, start_time, last_write_version, data, data_encoding) VALUES
@@ -62,10 +62,10 @@ namespace_id = :namespace_id AND
 workflow_id = :workflow_id
 `
 
-	createHistoryImmediateTasksQuery = `INSERT INTO history_immediate_tasks(shard_id, category_id, task_id, data, data_encoding) 
+	createHistoryImmediateTasksQuery = `INSERT INTO history_immediate_tasks(shard_id, category_id, task_id, data, data_encoding)
  VALUES(:shard_id, :category_id, :task_id, :data, :data_encoding)`
 
-	getHistoryImmediateTasksQuery = `SELECT task_id, data, data_encoding 
+	getHistoryImmediateTasksQuery = `SELECT task_id, data, data_encoding
  FROM history_immediate_tasks WHERE shard_id = ? AND category_id = ? AND task_id >= ? AND task_id < ? ORDER BY task_id LIMIT ?`
 
 	deleteHistoryImmediateTaskQuery       = `DELETE FROM history_immediate_tasks WHERE shard_id = ? AND category_id = ? AND task_id = ?`
@@ -74,20 +74,20 @@ workflow_id = :workflow_id
 	createHistoryScheduledTasksQuery = `INSERT INTO history_scheduled_tasks (shard_id, category_id, visibility_timestamp, task_id, data, data_encoding)
   VALUES (:shard_id, :category_id, :visibility_timestamp, :task_id, :data, :data_encoding)`
 
-	getHistoryScheduledTasksQuery = `SELECT visibility_timestamp, task_id, data, data_encoding FROM history_scheduled_tasks 
-  WHERE shard_id = ? 
-  AND category_id = ? 
-  AND ((visibility_timestamp >= ? AND task_id >= ?) OR visibility_timestamp > ?) 
+	getHistoryScheduledTasksQuery = `SELECT visibility_timestamp, task_id, data, data_encoding FROM history_scheduled_tasks
+  WHERE shard_id = ?
+  AND category_id = ?
+  AND ((visibility_timestamp >= ? AND task_id >= ?) OR visibility_timestamp > ?)
   AND visibility_timestamp < ?
   ORDER BY visibility_timestamp,task_id LIMIT ?`
 
 	deleteHistoryScheduledTaskQuery       = `DELETE FROM history_scheduled_tasks WHERE shard_id = ? AND category_id = ? AND visibility_timestamp = ? AND task_id = ?`
 	rangeDeleteHistoryScheduledTasksQuery = `DELETE FROM history_scheduled_tasks WHERE shard_id = ? AND category_id = ? AND visibility_timestamp >= ? AND visibility_timestamp < ?`
 
-	createTransferTasksQuery = `INSERT INTO transfer_tasks(shard_id, task_id, data, data_encoding) 
+	createTransferTasksQuery = `INSERT INTO transfer_tasks(shard_id, task_id, data, data_encoding)
  VALUES(:shard_id, :task_id, :data, :data_encoding)`
 
-	getTransferTasksQuery = `SELECT task_id, data, data_encoding 
+	getTransferTasksQuery = `SELECT task_id, data, data_encoding
  FROM transfer_tasks WHERE shard_id = ? AND task_id >= ? AND task_id < ? ORDER BY task_id LIMIT ?`
 
 	deleteTransferTaskQuery      = `DELETE FROM transfer_tasks WHERE shard_id = ? AND task_id = ?`
@@ -96,35 +96,35 @@ workflow_id = :workflow_id
 	createTimerTasksQuery = `INSERT INTO timer_tasks (shard_id, visibility_timestamp, task_id, data, data_encoding)
   VALUES (:shard_id, :visibility_timestamp, :task_id, :data, :data_encoding)`
 
-	getTimerTasksQuery = `SELECT visibility_timestamp, task_id, data, data_encoding FROM timer_tasks 
-  WHERE shard_id = ? 
-  AND ((visibility_timestamp >= ? AND task_id >= ?) OR visibility_timestamp > ?) 
+	getTimerTasksQuery = `SELECT visibility_timestamp, task_id, data, data_encoding FROM timer_tasks
+  WHERE shard_id = ?
+  AND ((visibility_timestamp >= ? AND task_id >= ?) OR visibility_timestamp > ?)
   AND visibility_timestamp < ?
   ORDER BY visibility_timestamp,task_id LIMIT ?`
 
 	deleteTimerTaskQuery      = `DELETE FROM timer_tasks WHERE shard_id = ? AND visibility_timestamp = ? AND task_id = ?`
 	rangeDeleteTimerTaskQuery = `DELETE FROM timer_tasks WHERE shard_id = ? AND visibility_timestamp >= ? AND visibility_timestamp < ?`
 
-	createReplicationTasksQuery = `INSERT INTO replication_tasks (shard_id, task_id, data, data_encoding) 
+	createReplicationTasksQuery = `INSERT INTO replication_tasks (shard_id, task_id, data, data_encoding)
   VALUES(:shard_id, :task_id, :data, :data_encoding)`
 
-	getReplicationTasksQuery = `SELECT task_id, data, data_encoding FROM replication_tasks WHERE 
+	getReplicationTasksQuery = `SELECT task_id, data, data_encoding FROM replication_tasks WHERE
 shard_id = ? AND task_id >= ? AND task_id < ? ORDER BY task_id LIMIT ?`
 
 	deleteReplicationTaskQuery      = `DELETE FROM replication_tasks WHERE shard_id = ? AND task_id = ?`
 	rangeDeleteReplicationTaskQuery = `DELETE FROM replication_tasks WHERE shard_id = ? AND task_id >= ? AND task_id < ?`
 
-	getReplicationTasksDLQQuery = `SELECT task_id, data, data_encoding FROM replication_tasks_dlq WHERE 
+	getReplicationTasksDLQQuery = `SELECT task_id, data, data_encoding FROM replication_tasks_dlq WHERE
 source_cluster_name = ? AND
 shard_id = ? AND
 task_id >= ? AND
 task_id < ?
 ORDER BY task_id LIMIT ?`
 
-	createVisibilityTasksQuery = `INSERT INTO visibility_tasks(shard_id, task_id, data, data_encoding) 
+	createVisibilityTasksQuery = `INSERT INTO visibility_tasks(shard_id, task_id, data, data_encoding)
  VALUES(:shard_id, :task_id, :data, :data_encoding)`
 
-	getVisibilityTasksQuery = `SELECT task_id, data, data_encoding 
+	getVisibilityTasksQuery = `SELECT task_id, data, data_encoding
  FROM visibility_tasks WHERE shard_id = ? AND task_id >= ? AND task_id < ? ORDER BY task_id LIMIT ?`
 
 	deleteVisibilityTaskQuery      = `DELETE FROM visibility_tasks WHERE shard_id = ? AND task_id = ?`
@@ -139,28 +139,28 @@ VALUES (:shard_id, :namespace_id, :workflow_id, :run_id, :data, :data_encoding)`
 shard_id=? AND namespace_id=? AND workflow_id=? AND run_id=? ORDER BY id`
 
 	insertReplicationTaskDLQQuery = `
-INSERT INTO replication_tasks_dlq 
-            (source_cluster_name, 
-             shard_id, 
-             task_id, 
-             data, 
-             data_encoding) 
-VALUES     (:source_cluster_name, 
-            :shard_id, 
-            :task_id, 
-            :data, 
+INSERT INTO replication_tasks_dlq
+            (source_cluster_name,
+             shard_id,
+             task_id,
+             data,
+             data_encoding)
+VALUES     (:source_cluster_name,
+            :shard_id,
+            :task_id,
+            :data,
             :data_encoding)
 `
 	deleteReplicationTaskFromDLQQuery = `
-	DELETE FROM replication_tasks_dlq 
-		WHERE source_cluster_name = ? 
-		AND shard_id = ? 
+	DELETE FROM replication_tasks_dlq
+		WHERE source_cluster_name = ?
+		AND shard_id = ?
 		AND task_id = ?`
 
 	rangeDeleteReplicationTaskFromDLQQuery = `
-	DELETE FROM replication_tasks_dlq 
-		WHERE source_cluster_name = ? 
-		AND shard_id = ? 
+	DELETE FROM replication_tasks_dlq
+		WHERE source_cluster_name = ?
+		AND shard_id = ?
 		AND task_id >= ?
 		AND task_id < ?`
 )
@@ -731,7 +731,6 @@ func (mdb *db) DeleteFromReplicationDLQTasks(
 	ctx context.Context,
 	filter sqlplugin.ReplicationDLQTasksFilter,
 ) (sql.Result, error) {
-
 	return mdb.ExecContext(ctx,
 		deleteReplicationTaskFromDLQQuery,
 		filter.SourceClusterName,
@@ -745,7 +744,6 @@ func (mdb *db) RangeDeleteFromReplicationDLQTasks(
 	ctx context.Context,
 	filter sqlplugin.ReplicationDLQTasksRangeFilter,
 ) (sql.Result, error) {
-
 	return mdb.ExecContext(ctx,
 		rangeDeleteReplicationTaskFromDLQQuery,
 		filter.SourceClusterName,
