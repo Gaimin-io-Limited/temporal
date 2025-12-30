@@ -69,10 +69,10 @@ docker build -t temporal-tidb:1.28.1 .
 
 # Tag for your registry
 # For Docker Hub:
-docker tag temporal-tidb:1.28.1 <your-dockerhub-username>/temporal-tidb:1.28.1
+docker tag temporal-tidb:1.28.1 ghcr.io/gaimin-io-limited/temporal-tidb:1.28.1
 
 # For private registry:
-docker tag temporal-tidb:1.28.1 <your-registry>/temporal-tidb:1.28.1
+docker tag temporal-tidb:1.28.1 ghcr.io/gaimin-io-limited/temporal-tidb:1.28.1
 ```
 
 The build will take 5-10 minutes.
@@ -108,7 +108,7 @@ docker push ghcr.io/gaimin-io-limited/temporal-tidb:1.28.1
 docker build -t temporal-tidb:1.28.1-$(date +%Y%m%d) .
 
 # Push and update Helm values
-docker push <registry>/temporal-tidb:1.28.1-$(date +%Y%m%d)
+docker push ghcr.io/gaimin-io-limited/temporal-tidb:1.28.1-$(date +%Y%m%d)
 ```
 
 ## Troubleshooting
