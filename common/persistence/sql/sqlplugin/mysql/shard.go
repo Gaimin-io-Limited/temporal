@@ -15,12 +15,12 @@ const (
  shard_id, range_id, data, data_encoding
  FROM shards WHERE shard_id = ?`
 
-	updateShardQry = `UPDATE shards 
- SET range_id = ?, data = ?, data_encoding = ? 
+	updateShardQry = `UPDATE shards
+ SET range_id = ?, data = ?, data_encoding = ?
  WHERE shard_id = ?`
 
 	lockShardQry     = `SELECT range_id FROM shards WHERE shard_id = ? FOR UPDATE`
-	readLockShardQry = `SELECT range_id FROM shards WHERE shard_id = ? LOCK IN SHARE MODE`
+	readLockShardQry = `SELECT range_id FROM shards WHERE shard_id = ? FOR UPDATE`
 )
 
 // InsertIntoShards inserts one or more rows into shards table
